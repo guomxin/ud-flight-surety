@@ -91,19 +91,25 @@ contract('Flight Surety Tests', async (accounts) => {
   });
 
   it('register another airline', async() =>{
-    
+
     // Fund airline
     await config.flightSuretyApp.fundAirline({from: config.firstAirline, value: web3.utils.toWei('10', 'ether')});
-    console.log(await flightSuretyData.getFunding({from: config.firstAirline}));
     
     // Register another airline
     await config.flightSuretyApp.registerAirline(accounts[3], {from: config.firstAirline});
 
     // Verify new airline is registered
-    let registeredAirlines = config.flightSuretyApp.getRegisteredAirlines();
-    console.log('registered airline: ' + registeredAirlines);
+    let registeredAirlines = await config.flightSuretyApp.getRegisteredAirlines();
+    let findAirline = false;
+    for (let regAirline of registeredAirlines) {
+      if (regAirline == accounts[3]) {
+        findAirline = true;
+        break;
+      }
+    }
+    assert.equal(findAirline, true, "New airline should be registered");
 
-  })
+  });
  
 
 });
