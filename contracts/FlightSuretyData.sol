@@ -277,7 +277,6 @@ contract FlightSuretyData {
             timestamp)].registered;
     }
 
-
     /**
      *  @dev Credits payouts to insurees
     */

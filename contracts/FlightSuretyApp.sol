@@ -191,19 +191,42 @@ contract FlightSuretyApp {
         return flightSuretyData.withdrawFunds(msg.sender, amountToWithdraw);
     }
 
+    function fundAirline() public requireIsOperational airlineRegistered(msg.sender) payable {
+        // Credit data contract
+        flightSuretyDataContractAddress.transfer(msg.value);
 
+        // Add funding
+        flightSuretyData.fund(msg.sender, msg.value);
+    }
 
    /**
     * @dev Register a future flight for insuring.
     *
     */  
-    function registerFlight
+    function registerFlightInsurance
                                 (
+                                    address airline,
+                                    string flightName,
+                                    uint256 timestamp
                                 )
                                 external
-                                pure
+                                requireIsOperational
+                                airlineRegistered(airline)
+                                payable
+
     {
 
+        // Check that insurance has not been bought for this flight before by the passenger
+        require(!flightSuretyData.isFlightInsuredByPassenger(airline, flightName, timestamp, msg.sender),
+            "this flight has already been insured by the caller");
+
+        // Max 1 ether allowed
+        require(msg.value <= MAX_INSURANCE_FLIGHT_BY_PASSENGER, "Insurance amount can not be more than 1 ether");
+
+        //transfer the amount to contract
+        flightSuretyDataContractAddress.transfer(msg.value);
+
+        flightSuretyData.buy(airline, flightName, timestamp, msg.sender, msg.value);
     }
     
    /**
@@ -213,15 +236,20 @@ contract FlightSuretyApp {
     function processFlightStatus
                                 (
                                     address airline,
-                                    string memory flight,
+                                    string flightName,
                                     uint256 timestamp,
                                     uint8 statusCode
                                 )
                                 internal
-                                pure
+                                requireIsOperational
     {
+        // Check status code
+        if(statusCode == STATUS_CODE_LATE_AIRLINE){
+            uint multiplier = 15;
+            uint dividend = 10;
+            flightSuretyData.creditInsurees(airline, flightName, timestamp, multiplier, dividend);
+        }
     }
-
 
     // Generate a request for oracles to fetch flight information
     function fetchFlightStatus
@@ -419,15 +447,13 @@ contract FlightSuretyApp {
 }   
 
 contract FlightSuretyData{
-
     function registerAirline(address airlineAddress) external returns (bool);
-    // function isFlightInsuredByPassenger(address airline, string calldata flightName, uint256 timestamp, address passenger) virtual external view returns (bool);
+    function isFlightInsuredByPassenger(address airline, string flightName, uint256 timestamp, address passenger) external view returns (bool);
     function getRegAirlineCount() external view returns (uint256);
     function isRegistered(address airlineAddress) external view returns (bool);
-    // function buy (address _airline, string calldata _flightName, uint256 _timestamp, address _passenger, uint amount) virtual external payable;
-    // function creditInsurees (address _airline, string calldata _flightName, uint256 _timestamp, uint _multiplier, uint _dividend) virtual external;
-    // function getAmountInsuredByPassenger(address _airline, string calldata _flightName, uint256 _timestamp, address _passenger) virtual external view returns(uint amount);
-    // function fund(address airline, uint amount) virtual external payable;
+    function buy (address airline, string flightName, uint256 timestamp, address passenger, uint256 amount) external;
+    function creditInsurees (address airline, string flightName, uint256 timestamp, uint256 multiplier, uint256 dividend) external;
+    function fund(address airline, uint256 amount) external;
     function getFunding(address airline) external view returns (uint256);
     function isOperational() external view returns(bool);
     function getRegisteredAirlines() external view returns(address[] memory);
