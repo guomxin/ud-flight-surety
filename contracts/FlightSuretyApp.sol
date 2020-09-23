@@ -170,6 +170,29 @@ contract FlightSuretyApp {
         return (success, currVotes);
     }
 
+    function getRegisteredAirlineCount() public requireIsOperational view returns(uint256){
+        return flightSuretyData.getRegAirlineCount();
+    }
+
+    function getRegisteredAirlines() public requireIsOperational view returns(address[] memory){
+        return flightSuretyData.getRegisteredAirlines();
+    }
+
+    function getPassengerBalance() public requireIsOperational view returns(uint256 balance){
+        return flightSuretyData.getPassengerBalance(msg.sender);
+    }
+
+    function getAirlineBalance(address airline) public requireIsOperational view returns (uint256){
+        return flightSuretyData.getAirlineBalance(airline);
+    }
+
+    function withdrawFunds(uint amountToWithdraw) public requireIsOperational returns (uint256){
+        require(flightSuretyData.getPassengerBalance(msg.sender) >= amountToWithdraw, 'Withdraw amount exceeds balance');
+        return flightSuretyData.withdrawFunds(msg.sender, amountToWithdraw);
+    }
+
+
+
    /**
     * @dev Register a future flight for insuring.
     *
@@ -407,10 +430,8 @@ contract FlightSuretyData{
     // function fund(address airline, uint amount) virtual external payable;
     function getFunding(address airline) external view returns (uint256);
     function isOperational() external view returns(bool);
-    // function getRegisteredAirlines() virtual external view returns(address[] memory);
-    // function getPassengerBalance(address passenger) virtual external view returns (uint);
-    // function withdrawFunds(address passenger, uint amoutToWithdraw) virtual external returns(uint);
-    // function getAirlineBalance(address airline) virtual external view returns (uint);
-
-
+    function getRegisteredAirlines() external view returns(address[] memory);
+    function getPassengerBalance(address passenger) external view returns (uint256);
+    function withdrawFunds(address passenger, uint256 amoutToWithdraw) external returns(uint256);
+    function getAirlineBalance(address airline) external view returns (uint256);
 }
