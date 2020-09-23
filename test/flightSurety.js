@@ -62,6 +62,7 @@ contract('Flight Surety Tests', async (accounts) => {
           await config.flightSurety.setTestingMode(true);
       }
       catch(e) {
+          //console.log(e);
           reverted = true;
       }
       assert.equal(reverted, true, "Access not blocked for requireIsOperational");      

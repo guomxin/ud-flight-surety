@@ -24,6 +24,9 @@ contract FlightSuretyApp {
     uint8 private constant STATUS_CODE_LATE_TECHNICAL = 40;
     uint8 private constant STATUS_CODE_LATE_OTHER = 50;
 
+    uint private constant MIN_AIRLINE_CONTRIBUTION = 10 ether;
+    uint private constant MAX_INSURANCE_FLIGHT_BY_PASSENGER = 1 ether;
+
     address private contractOwner;          // Account used to deploy contract
 
     struct Flight {
@@ -33,6 +36,12 @@ contract FlightSuretyApp {
         address airline;
     }
     mapping(bytes32 => Flight) private flights;
+
+    FlightSuretyData private flightSuretyData;
+    address flightSuretyDataContractAddress;
+
+    uint8 private constant CONSENSUS_THRESHOLD = 4;
+    mapping(address => address[]) private airlineVoters;
 
  
     /********************************************************************************************/
@@ -63,6 +72,17 @@ contract FlightSuretyApp {
         _;
     }
 
+    modifier airlineRegistered(address airline){
+        require(flightSuretyData.isRegistered(airline), "Airline not registered");
+        _;
+    }
+
+    modifier airlineHasContributedMinFunding(){
+        uint256 currFunds = flightSuretyData.getFunding(msg.sender);
+        require(currFunds >= MIN_AIRLINE_CONTRIBUTION, "Airline has not funded enough to participate");
+        _;
+    }
+
     /********************************************************************************************/
     /*                                       CONSTRUCTOR                                        */
     /********************************************************************************************/
@@ -71,12 +91,13 @@ contract FlightSuretyApp {
     * @dev Contract constructor
     *
     */
-    constructor
-                                (
-                                ) 
-                                public 
+    constructor(address dataContract) public
     {
         contractOwner = msg.sender;
+
+        //reference the deployed data contract
+        flightSuretyData = FlightSuretyData(dataContract);
+        flightSuretyDataContractAddress = dataContract;
     }
 
     /********************************************************************************************/
@@ -85,10 +106,10 @@ contract FlightSuretyApp {
 
     function isOperational() 
                             public 
-                            pure 
+                            view 
                             returns(bool) 
     {
-        return true;  // Modify to call data contract's status
+        return flightSuretyData.isOperational();
     }
 
     /********************************************************************************************/
@@ -100,16 +121,54 @@ contract FlightSuretyApp {
     * @dev Add an airline to the registration queue
     *
     */   
-    function registerAirline
-                            (   
+     function registerAirline
+                            (
+                                address airlineAddress
                             )
                             external
-                            pure
+                            requireIsOperational
+                            airlineRegistered(msg.sender)
+                            airlineHasContributedMinFunding
                             returns(bool success, uint256 votes)
     {
-        return (success, 0);
-    }
 
+        require(airlineAddress != address(0), "Not a valid address");
+        require(!flightSuretyData.isRegistered(airlineAddress), "Airline already registered");
+
+        success = false;
+        uint256 currVotes = 0;
+        uint256 regAirlineCount = flightSuretyData.getRegAirlineCount();
+
+        // Check num of registered airlines
+        if(regAirlineCount < CONSENSUS_THRESHOLD){
+            success = flightSuretyData.registerAirline(airlineAddress);
+        }
+        // Need multi-party consensus to register this airline
+        else{
+            // Make sure airlines can only vote once
+            bool hasVotedBefore = false;
+            address[] memory voters = airlineVoters[airlineAddress];
+            for(uint i = 0; i < voters.length; i++){
+                if(voters[i] == msg.sender){
+                    hasVotedBefore = true;
+                    break;
+                }
+            }
+            require(!hasVotedBefore, "Caller has already voted before to register the airline");
+
+            // If hasnt voted before, add into list of voters to register that airline
+            airlineVoters[airlineAddress].push(msg.sender);
+            currVotes = airlineVoters[airlineAddress].length;
+
+            // Check if airline has received enough votes to be registered
+            if(currVotes > regAirlineCount.div(2)){
+                success = flightSuretyData.registerAirline(airlineAddress);
+            }
+
+        }
+
+        return (success, currVotes);
+    }
 
    /**
     * @dev Register a future flight for insuring.
@@ -335,3 +394,23 @@ contract FlightSuretyApp {
 // endregion
 
 }   
+
+contract FlightSuretyData{
+
+    function registerAirline(address airlineAddress) external returns (bool);
+    // function isFlightInsuredByPassenger(address airline, string calldata flightName, uint256 timestamp, address passenger) virtual external view returns (bool);
+    function getRegAirlineCount() external view returns (uint256);
+    function isRegistered(address airlineAddress) external view returns (bool);
+    // function buy (address _airline, string calldata _flightName, uint256 _timestamp, address _passenger, uint amount) virtual external payable;
+    // function creditInsurees (address _airline, string calldata _flightName, uint256 _timestamp, uint _multiplier, uint _dividend) virtual external;
+    // function getAmountInsuredByPassenger(address _airline, string calldata _flightName, uint256 _timestamp, address _passenger) virtual external view returns(uint amount);
+    // function fund(address airline, uint amount) virtual external payable;
+    function getFunding(address airline) external view returns (uint256);
+    function isOperational() external view returns(bool);
+    // function getRegisteredAirlines() virtual external view returns(address[] memory);
+    // function getPassengerBalance(address passenger) virtual external view returns (uint);
+    // function withdrawFunds(address passenger, uint amoutToWithdraw) virtual external returns(uint);
+    // function getAirlineBalance(address airline) virtual external view returns (uint);
+
+
+}
