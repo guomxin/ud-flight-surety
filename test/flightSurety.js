@@ -90,7 +90,7 @@ contract('Flight Surety Tests', async (accounts) => {
 
   });
 
-  it('register another airline', async() =>{
+  it('(airline) register an Airline using registerAirline() if it is funded', async() =>{
 
     // Fund airline
     await config.flightSuretyApp.fundAirline({from: config.firstAirline, value: web3.utils.toWei('10', 'ether')});
@@ -108,7 +108,6 @@ contract('Flight Surety Tests', async (accounts) => {
       }
     }
     assert.equal(findAirline, true, "New airline should be registered");
-
   });
  
 
