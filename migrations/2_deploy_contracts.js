@@ -4,7 +4,7 @@ const fs = require('fs');
 
 module.exports = function(deployer) {
 
-    let firstAirline = '0xf17f52151EbEF6C7334FAD080c5704D77216b732';
+    let firstAirline = '0x2E8A50Af225475ac7700CD38fe0CAc9687a294d5'; // The second account of your ganache accounts
     deployer.deploy(FlightSuretyData, firstAirline)
     .then(() => {
         return deployer.deploy(FlightSuretyApp, FlightSuretyData.address)

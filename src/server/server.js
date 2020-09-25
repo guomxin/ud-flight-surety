@@ -1,4 +1,5 @@
 import FlightSuretyApp from '../../build/contracts/FlightSuretyApp.json';
+import FlightSuretyData from '../../build/contracts/FlightSuretyData.json';
 import Config from './config.json';
 import Web3 from 'web3';
 import express from 'express';
@@ -57,7 +58,7 @@ web3.eth.getAccounts().then((accounts) => {
     .REGISTRATION_FEE()
     .call()
     .then((fee) => {
-      for (let a = 1; a < ORACLES_COUNT; a++) {
+      for (let a = 1; a <= ORACLES_COUNT; a++) {
         flightSuretyApp.methods
           .registerOracle()
           .send({ from: accounts[a], value: fee, gas: 4000000 })
