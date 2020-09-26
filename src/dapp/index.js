@@ -25,6 +25,39 @@ import './flightsurety.css';
                 display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp} ]);
             });
         })
+
+        // Register airline
+        DOM.elid('register-airline').addEventListener('click', () => {
+            let registeredAirline = DOM.elid('registered-airline').value;
+            let airline = DOM.elid('airline-address').value;
+            // Write transaction
+            contract.registerAirline(registeredAirline, airline, (error, result) => {
+                console.log(result);
+                display('Airlines', 'Register airline', [ 
+                    { label: 'Register status', error: error, value: error ? '': 'Success: ' + result.success + ' Votes: ' + result.votes} ]);
+            });
+        })
+
+        // Fund airline
+        DOM.elid('fund-airline').addEventListener('click', () => {
+            let fundingAirline = DOM.elid('funding-airline').value;
+            let ehterCount = DOM.elid('airline-funds').value;
+            // Write transaction
+            contract.fundAirline(fundingAirline, ehterCount, (error, result) => {
+                display('Airlines', 'Fund airline', [ 
+                    { label: 'Fund status', error: error, value: error ? '': fundingAirline + ' funded ' + ehterCount + ' ethers.'} ]);
+            });
+        })
+
+         // Get registered airline count
+         DOM.elid('getinfo-regairline').addEventListener('click', () => {
+            contract.getRegisteredAirlines((error, result) => {
+                DOM.elid('registered-airline-info').value = result;
+                console.log(result);
+                display('Airlines', 'Fund airline', [ 
+                    { label: 'Fund status', error: error, value: 'Registered airline count: ' + result.length} ]);
+            });
+        })
     
     });
     
