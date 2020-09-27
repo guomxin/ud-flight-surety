@@ -31,16 +31,19 @@
         <div style="" class="mb-2">
     
             <h4>Get Flight Status</h4>
-            <form class="form-inline mb-2">
-                <label for="status-airline" class="mr-sm-2">Airline</label>
-                <select class="form-control" id="status-airline">
+            <form class="form-inline">
+                <label for="status-airline">Airline:</label>
+                <input type="text" class="form-control mr-left" id="status-airline" value="0x2E8A50Af225475ac7700CD38fe0CAc9687a294d5">
+
+                <label for="status-flight">Flight:</label>
+                <select class="form-control mr-left" id="status-flight">
+                    <option value="F01" selected>F01</option>
+                    <option value="F02">F02</option>
+                    <option value="F03">F03</option>
                 </select>
-                <label for="status-flight-number" class="mr-sm-2">Flight</label>
-                <select class="form-control" id="status-flight-number">
-                </select>
-                <label class="mr-sm-2">Date:</label>
-                <div style="background-color: white">
-    
+
+                <label for="status-datepicker" class="mr-left">Date:</label>
+                <div style="background-color: white" class="mr-left">
                     <input id="status-datepicker" class="form-control" width="200" />
                 </div>
                 <script>
@@ -48,7 +51,8 @@
                         uiLibrary: 'bootstrap4'
                     });
                 </script>
-                <btn class="btn btn-primary ml-2" id="submit-oracle">Submit to Oracles</btn>
+
+                <btn class="btn btn-primary mr-left" id="submit-oracle">Submit to Oracles</btn>
             </form>
         </div>
         <hr>
@@ -66,13 +70,10 @@
             <h4>Register Airline</h4>
             <form class="form-inline">
                 <label for="registered-airline" >Your Airline:</label>
-                <input type="text" class="form-control mr-left" id="registered-airline" value="0x708F8A48D59467daA9743C153EF9a5bbec387a25">
-                <!--
-                <select class="form-control" id="registered-airlines">
-                </select>&nbsp;&nbsp;&nbsp;
-                -->
+                <input type="text" class="form-control mr-left" id="registered-airline" value="0x2E8A50Af225475ac7700CD38fe0CAc9687a294d5">
+            
                 <label for="airline-address">Airline To Register:</label>
-                <input type="text" class="form-control mr-left" id="airline-address" value="0xdFa08BbD9A4574d9E9f35F8da8753E1420291748">
+                <input type="text" class="form-control mr-left" id="airline-address" value="0xbCF845f94121446397CF7C7d5dE5E62633D45dcD">
 
                 <btn class="btn btn-primary" id="register-airline">Register</btn>
             </form>
@@ -80,13 +81,8 @@
             <h4>Fund Airline</h4>
             <form class="form-inline">
                 <label for="funding-airline">Choose Your Airline</label>
-                <input type="text" class="form-control mr-left" id="funding-airline" value="0x708F8A48D59467daA9743C153EF9a5bbec387a25">
+                <input type="text" class="form-control mr-left" id="funding-airline" value="0x2E8A50Af225475ac7700CD38fe0CAc9687a294d5">
                 
-                <!--
-                <label for="airline-balance">Balance(ether)</label> <input type="text" readonly
-                    class="form-control mr-left" id="airline-balance">
-                -->
-
                 <input type="text" placeholder="Amount(ether)" class="form-control mr-left" id="airline-funds">
                 <btn class="btn btn-primary" id="fund-airline">Deposit Fund</btn>
     
@@ -94,53 +90,54 @@
         </div>
         <hr>
         <br>
-        <div class="mb-2">
+        <div>
             <h1>---Passengers---</h1>
-    
             <h4>Purchase Insurance</h4>
-            <form class="form-inline mb-2">
-                <label for="insurance-passenger" class="mr-sm-2">Passenger</label>
-                <select class="form-control" id="insurance-passenger">
+            <form class="form-inline">
+                <label for="insurance-passenger">Passenger:</label>
+                <input type="text" class="form-control mr-left" id="insurance-passenger" value="0x1C0A6BfE1BBDE9545043FB5fFeb907B55AFE60D4">
+
+                <label for="insurance-airline">Airline:</label>
+                <input type="text" class="form-control mr-left" id="insurance-airline" value="0x2E8A50Af225475ac7700CD38fe0CAc9687a294d5">
+
+                <label for="insurance-flight">Flight:</label>
+                <select class="form-control mr-left" id="insurance-flight">
+                    <option value="F01" selected>F01</option>
+                    <option value="F02">F02</option>
+                    <option value="F03">F03</option>
                 </select>
-                <label for="insurance-airline" class="mr-sm-2">Airline</label>
-                <select class="form-control" id="insurance-airline">
-                </select>
-                <label for="insurance-flight-number" class="mr-sm-2">Flight</label>
-                <select class="form-control" id="insurance-flight-number">
-                </select>
-                <label for="insurance-datepicker" class="mr-sm-2">Date:</label>
-                <div style="background-color: white">
+
+                <label for="insurance-datepicker" class="mr-left">Date:</label>
+                <div style="background-color: white" class="mr-left">
                     <input id="insurance-datepicker" class="form-control" width="200" />
                 </div>
-    
                 <script>
                     $('#insurance-datepicker').datepicker({
                         uiLibrary: 'bootstrap4'
                     });
                 </script>
     
-                <div class="mb-2">
-                    <input type="text" placeholder='Amount(ether)' class="form-control mb-2 mr-sm-1"
-                        id="insurance-add-funds">
-                    <btn class="btn btn-primary" id="purchase-insurance">Buy Insurance</btn>
-                </div>
+                
+                <input type="text" placeholder='Amount(ether)' class="form-control mr-left" id="insurance-value">
+                <btn class="btn btn-primary" id="purchase-insurance">Buy Insurance</btn>
             </form>
-    
-    
+            <hr>
+            <h4>Get Balance</h4>
+            <form class="form-inline">
+                <label for="balance-passenger" >Passenger:</label>
+                <input type="text" class="form-control mr-left" id="balance-passenger" value="0x1C0A6BfE1BBDE9545043FB5fFeb907B55AFE60D4">
+
+                <btn class="btn btn-primary" id="getbalance-passenger">Get</btn>
+            </form>
         </div>
         <hr>
-        <div class="mb-2">
+        <div>
             <h4>Withdraw Funds</h4>
-            <form class="form-inline mb-2">
-    
-                <label for="withdraw-passenger" class="mr-sm-2">Passenger</label>
-                <select class="form-control" id="withdraw-passenger">
-                </select>
-                <label for="withdraw-balance" class="mr-sm-2">Balance(ether)</label>
-                <input type="text" readonly class="form-control mb-2 mr-sm-3" id="withdraw-balance">
-    
-    
-                <input type="text" placeholder="Amount(ether)" class="form-control mb-2 mr-sm-3" id="withdraw-amount">
+            <form class="form-inline">
+                <label for="withdraw-passenger">Passenger:</label>
+                <input type="text" class="form-control mr-left" id="withdraw-passenger" value="0x1C0A6BfE1BBDE9545043FB5fFeb907B55AFE60D4">
+                <label for="withdraw-balance">Withdraw(ether):</label>
+                <input type="text" placeholder="Amount(ether)" class="form-control mr-left" id="withdraw-amount">
                 <btn class="btn btn-primary" id="withdraw-funds">Withdraw Funds</btn>
             </form>
         </div>
