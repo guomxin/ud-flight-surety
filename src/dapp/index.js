@@ -34,7 +34,7 @@ import './flightsurety.css';
             contract.registerAirline(registeredAirline, airline, (error, result) => {
                 console.log(result);
                 display('Airlines', 'Register airline', [ 
-                    { label: 'Register status', error: error, value: error ? '': 'Success: ' + result.success + ' Votes: ' + result.votes} ]);
+                    { label: 'Register status', error: error, value: error ? '': 'Send register tx for ' + airline + '.'} ]);
             });
         })
 
